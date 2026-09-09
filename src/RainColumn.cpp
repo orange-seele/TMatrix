@@ -21,9 +21,8 @@ void RainColumn::GenerateSpeeds(DecimalFraction speed)
 	while (true) {
 		DecimalFraction integerSpeed {speedAproximation.GetFloor()};
 		Speeds.emplace_back(integerSpeed.GetIntegerPart());
-		if (integerSpeed == speedAproximation) {
+		if (integerSpeed == speedAproximation)
 			return;
-		}
 		sumOfIntegerSpeeds += integerSpeed;
 		trueSum += speed;
 		speedAproximation = trueSum - sumOfIntegerSpeeds;
@@ -55,18 +54,20 @@ void RainColumn::Step()
 		const auto& Head {RainStreaks.back()};
 		// Check if a title character needs to be drawn
 		bool ContainsTitle {TitleChar != '\0'};
-		if (ContainsTitle && TitleChar != ' ' && (TitleRevealed ||
-		    (FirstRainStreak && FirstRainStreak->HasReachedScreenMiddle() &&
-		     !FirstRainStreak->HasLeftScreenMiddle()))) {
-			if (PersistentTitle && !TitleRevealed) {
-				TitleRevealed = true;
-			}
-			terminal->DrawTitle(x, terminal->GetNumberOfRows()/2, TitleChar);
+
+		if (ContainsTitle && FirstRainStreak &&
+			FirstRainStreak->HasReachedScreenMiddle() &&
+			!FirstRainStreak->HasLeftScreenMiddle() && TitleChar != ' ') {
+			terminal->DrawTitle(
+				x,
+				terminal->GetNumberOfRows()/2,
+				TitleChar
+			);
 		}
 		// Check if an empty slot appeared
 		if ((!ContainsTitle || !FirstRainStreak ||
-		     FirstRainStreak->HasReachedScreenMiddle()) &&
-		    Head.HasFullyEnteredScreen() && !EmptyRainStreakSlot) {
+			FirstRainStreak->HasReachedScreenMiddle()) &&
+			Head.HasFullyEnteredScreen() && !EmptyRainStreakSlot) {
 			EmptyRainStreakSlot = true;
 			GapTimer.ResetWithStartingTime(rain->GetRandomGap());
 		}

@@ -33,9 +33,13 @@ template <bool F>
 class ColorTerminal : public Terminal {
 	using TCharType = TerminalChar<F>;
 
+	// Actual terminal width in cells.
+	// NumberOfColumns is the logical Matrix width (half of this).
+	unsigned TerminalColumns {0};
+
 	std::vector<TCharType> ScreenBuffer;
 public:
-	ColorTerminal(const Color& color, const Color& background_color);
+	ColorTerminal<F>(const Color& color, const Color& background_color);
 
 	void Reset() final;
 	void Draw(unsigned x, unsigned y, const char *mchar, int colorShade) final;

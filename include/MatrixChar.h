@@ -16,23 +16,26 @@ class MatrixChar final : public Active, public HasTerminal {
 	const unsigned x;
 	const unsigned y;
 	CountdownTimer UpdateTimer;
-	std::size_t MCharIndex {GetRandomMCharIndex()};
+	size_t MCharIndex {GetRandomMCharIndex()};
 	int ColorShade {0};
 
-	static std::size_t GetRandomMCharIndex();
+	static size_t GetRandomMCharIndex();
 	void SetRandomMChar();
 	void Draw() const;
 	void Erase() const;
 public:
 	static constexpr std::size_t MCHAR_SIZE {sizeof("𐌇")-1};
-	static constexpr std::size_t ALL_MCHARS_LENGTH {57};
+	static constexpr std::size_t ALL_MCHARS_LENGTH {82};
 	static constexpr std::array<const char [MCHAR_SIZE+1], ALL_MCHARS_LENGTH> ALL_MCHARS {
-		"ﾊ", "ﾐ", "ﾋ", "ｰ", "ｳ", "ｼ", "ﾅ", "ﾓ", "ﾆ", "ｻ",
-		"ﾜ", "ﾂ", "ｵ", "ﾘ", "ｱ", "ﾎ", "ﾃ", "ﾏ", "ｹ", "ﾒ",
-		"ｴ", "ｶ", "ｷ", "ﾑ", "ﾕ", "ﾗ", "ｾ", "ﾈ", "ｽ", "ﾀ",
-		"ﾇ", "ﾍ", "𐌇", "0", "1", "2", "3", "4", "5", "7",
-		"8", "9", "Z", ":", ".", "･", "=", "*", "+", "-",
-		"<", ">", "¦", "|", "╌", " ", "\""
+		"０", "１", "２", "３", "４", "５", "６", "７", "８", "９",
+		"ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ",
+		"サ", "シ", "ス", "セ", "ソ", "タ", "チ", "ツ", "テ", "ト",
+		"ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ",
+		"マ", "ミ", "ム", "メ", "モ", "ラ", "リ", "ル", "レ", "ロ",
+		"ヤ", "ユ", "ヨ", "ワ", "ン", "ヲ", "Ｈ", "Ｚ", "Ｅ", "Ｉ",
+		"Ｎ", "Ｘ", "＝", "＋", "〜", "＊", "－", "／", "＞", "＜",
+		"：", "．", "・", "；", "＄", "＠", "％", "＆", "日", "？",
+		"　", "＃"
 	};
 	static constexpr char EMPTY_MCHAR[MCHAR_SIZE+1] {" "};
 
@@ -44,14 +47,14 @@ public:
 		Erase();
 	}
 
-	static constexpr const char *GetMChar(std::size_t index)
+	static const char *GetMChar(std::size_t index)
 	{
 		return ALL_MCHARS[index];
 	}
 
-	static constexpr const char *GetEmptyMChar()
+	static const char *GetEmptyMChar()
 	{
-		return EMPTY_MCHAR;
+		return ALL_MCHARS[ALL_MCHARS_LENGTH-2];
 	}
 
 	unsigned GetVerticalOffset(unsigned verticalPosition) {

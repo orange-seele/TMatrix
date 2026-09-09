@@ -39,13 +39,19 @@ void BaseTerminalChar<F>::SetFullTitleChar(wchar_t tchar)
 	std::memcpy(&prefix, GLOWING_COLOR_ESC_SEQ, PREFIX_SIZE);
 	std::memset(&MChar, '\0', MatrixChar::MCHAR_SIZE);
 
-	// Convert wchar to (const char *)
-	std::string tchar_buffer(MB_CUR_MAX, '\0');
-	int tchar_size = std::wctomb(&tchar_buffer[0], tchar);
-	if (tchar_size > 0) {
-		std::memcpy(&MChar, tchar_buffer.data(),
-			    std::min(static_cast<std::size_t>(tchar_size),
-			    MatrixChar::MCHAR_SIZE));
+	unsigned int c {static_cast<unsigned int>(tchar)};
+
+	if (c <= 0x7F) {
+		MChar[0] = static_cast<char>(c);
+	}
+	else if (c <= 0x7FF) {
+		MChar[0] = static_cast<char>(0xC0 | (c >> 6));
+		MChar[1] = static_cast<char>(0x80 | (c & 0x3F));
+	}
+	else {
+		MChar[0] = static_cast<char>(0xE0 | (c >> 12));
+		MChar[1] = static_cast<char>(0x80 | ((c >> 6) & 0x3F));
+		MChar[2] = static_cast<char>(0x80 | (c & 0x3F));
 	}
 }
 // Instantiate both versions of the SetFullTitleChar()
