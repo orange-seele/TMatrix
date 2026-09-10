@@ -1,143 +1,314 @@
 # TMatrix
 
-[![\[Latest GitHub release\]](https://img.shields.io/github/v/release/M4444/TMatrix)](https://github.com/M4444/TMatrix/releases)
-[![\[License\]](https://img.shields.io/badge/license-GPL--2.0--only-green)](https://github.com/M4444/TMatrix/blob/master/LICENSE)
+TMatrix is a terminal-based recreation of the digital rain effect from *The Matrix*.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/995dada1ec344743921cdd10fc118f3a)](https://www.codacy.com/manual/M4444/TMatrix?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=M4444/TMatrix&amp;utm_campaign=Badge_Grade)
-[![CodeQL Advanced](https://github.com/M4444/TMatrix/actions/workflows/codeql.yml/badge.svg)](https://github.com/M4444/TMatrix/actions/workflows/codeql.yml)
+![TMatrix Fullwidth Screenshot](assets/img/TMatrix_fullwidth.png)
 
-TMatrix is a program that simulates the digital rain from The Matrix.
-It's focused on being the most accurate replica of the digital rain effect achievable on a typical terminal, while also being customizable and performant.
+This repository is a fork of [M4444/TMatrix](https://github.com/M4444/TMatrix), with additional modifications focused on **fullwidth character support** and **Nix / NixOS integration**.
+
+## About this fork
+
+This fork maintains the original TMatrix project while adding and experimenting with improvements that are useful for modern terminal environments.
+
+### Main changes
+
+* Added support for **fullwidth characters** in the digital rain character set.
+* Improved rendering of fullwidth characters to prevent character-width misalignment.
+* Added a **Nix Flake** for reproducible builds and installation.
+* The project can be built and run directly from GitHub with Nix.
+
+The original project and its history are preserved as the upstream source of this fork.
+
+**Upstream:** [M4444/TMatrix](https://github.com/M4444/TMatrix)
+
+**This fork:** [orange-seele/TMatrix](https://github.com/orange-seele/TMatrix)
+
+---
+
+## Features
+
+TMatrix aims to provide an accurate, customizable, and performant terminal implementation of the digital rain effect.
+
+It supports customization of:
+
+* Rain characters
+* Colors
+* Rain speed
+* Rain length
+* Character spacing
+* Background appearance
+* Starting title text
+* Other visual parameters
+
+During execution:
+
+* Press `p` to pause.
+* Press `q` to quit.
+
+For the complete list of options:
+
+```bash
+tmatrix --help
+```
+
+or:
+
+```bash
+man tmatrix
+```
+
+---
 
 ## Installation
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/tmatrix-m4444.svg?exclude_unsupported=1&columns=2)](https://repology.org/project/tmatrix-m4444/versions)
+### Nix / NixOS
 
-### Install on Ubuntu or Debian
+This fork includes a Nix Flake and can be run directly from GitHub.
 
-On Ubuntu 26.04+ or Debian 14+ the package can be installed from the official repositories:
-```shell
-sudo apt install tmatrix
+#### Run directly
+
+No repository checkout is required:
+
+```bash
+nix run github:orange-seele/TMatrix
 ```
 
-For older Debian system versions you can download the `.deb` package for your architecture from [packages.debian.org](https://packages.debian.org/forky/tmatrix) and install it with `dpkg`:
-```shell
-sudo dpkg -i tmatrix_*.deb
+#### Build the package
+
+```bash
+nix build github:orange-seele/TMatrix
 ```
 
-### Install on Arch Linux [![AUR votes](https://img.shields.io/aur/votes/tmatrix-git)](https://aur.archlinux.org/packages/tmatrix-git)
+The resulting executable will be available through:
 
-Install [`tmatrix-git`](https://aur.archlinux.org/packages/tmatrix-git/) from
-the AUR. For example, with an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers)
-such as [`yay`](https://aur.archlinux.org/packages/yay/):
-```shell
-yay -S tmatrix-git
+```bash
+./result/bin/tmatrix
 ```
 
-### Install on any Nix system
-```shell
-nix-env -f '<nixpkgs>' -iA tmatrix
+#### Install into a NixOS system
+
+If you are using a NixOS system configured with Flakes, add this repository as an input to your system Flake:
+
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+
+  tmatrix.url = "github:orange-seele/TMatrix";
+};
 ```
 
-### Install on openSUSE Linux
+Then add the package to `environment.systemPackages`:
 
-The package can be installed from the community repo:
-#### Note: if you are using other versions insted of Tubleweed uncomment the one you're using and delete the others.
-```shell
-DISTRIBUTION=Tumbleweed
-#DISTRIBUTION=Slowroll
-#DISTRIBUTION=Leap_15.6
-#DISTRIBUTION=Leap_15.5
-
-zypper addrepo "https://download.opensuse.org/repositories/home:kosmonaut2001/openSUSE_${DISTRIBUTION}/home:kosmonaut2000.repo"
-zypper refresh
-zypper install TMatrix
+```nix
+environment.systemPackages = [
+  inputs.tmatrix.packages.${pkgs.system}.default
+];
 ```
 
-### Download and install on other GNU/Linux distributions
-The prebuilt TMatrix uses **version 5** of the ncurses library.
-To install the library on Ubuntu or Debian run:
-```shell
-sudo apt-get install libncurses5
-```
-Now that you have the required library you can install and run tmatrix:
-```shell
-wget -q https://github.com/M4444/TMatrix/releases/download/v1.4/installation.tar.gz
-tar -zxvf installation.tar.gz
-cd installation
-sudo ./install.sh
-```
-To check if it installed correctly run:
-```shell
-tmatrix --version
-```
+After rebuilding the system, `tmatrix` will be available as a normal system command.
 
-#### Uninstall
-```shell
-sudo rm -f /usr/bin/tmatrix \
-           /usr/share/man/man6/tmatrix.6.gz \
-           /usr/share/bash-completion/completions/tmatrix \
-           /usr/share/zsh/site-functions/_tmatrix
-```
-To check if anything was left behind you can run:
-```shell
-locate tmatrix
-```
+The Flake currently targets `nixpkgs` 26.05.
 
-### Build and install from source
-#### Tools
-This project uses C++17 so you'll need the latest tools in order you build it:
-- [CMake 3.8+](https://cmake.org/download/)
-- [GCC 7+](https://gcc.gnu.org/) or [Clang 5+](http://releases.llvm.org/)
+---
 
-#### Library
-- [ncurses](https://www.gnu.org/software/ncurses/)
+## Build from source
 
-#### Commands
-```shell
-git clone https://github.com/M4444/TMatrix.git
+TMatrix uses C++17 and CMake.
+
+### Requirements
+
+* C++17-compatible compiler
+
+  * GCC 7+
+  * Clang 5+
+* CMake 3.8+
+* ncurses
+
+### Clone this fork
+
+```bash
+git clone https://github.com/orange-seele/TMatrix.git
 cd TMatrix
-mkdir -p build && cd build
+```
+
+### Build
+
+```bash
+mkdir -p build
+cd build
 cmake ..
-make -j8
+make -j$(nproc)
+```
+
+The executable will be generated as:
+
+```text
+build/tmatrix
+```
+
+You can run it directly:
+
+```bash
+./tmatrix
+```
+
+### Install
+
+To install system-wide:
+
+```bash
 sudo make install
 ```
 
-## Info
+---
 
-### Options
-TMatrix is very customizable.
-You can change the starting title text, the color of the background and the characters, the speed, length and separations of the rain streaks.
-During execution you can use `p` to pause and `q` to quit.
+## Nix development
 
-For a full description of all the options run `man tmatrix` or `tmatrix --help`.
+The repository itself is a Nix Flake, so the package can also be built locally with:
 
-### Contributing
-Suggestions, bug reports and patch submissions are all welcome.
-You can create an [issue](../../issues), send a [pull requests](../../pulls) of just send an [email](mailto:mc.cm.mail@gmail.com).
-For details see [CONTRIBUTING.md](../master/CONTRIBUTING.md).
+```bash
+nix flake check
+```
 
-### Author
-Written and maintained by Miloš Stojanović ([mc.cm.mail@gmail.com](mailto:mc.cm.mail@gmail.com)).
+Build it with:
 
-### Acknowledgments
-Thanks to:
-- [Infinisil](https://github.com/Infinisil) for creating a Nix package
-- [filalex77](https://github.com/filalex77) for creating a Gentoo Linux package, adding bash, zsh and tcsh completions scripts and a .editorconfig file
-- [eliasrg](https://github.com/eliasrg) for creating and maintaining the Arch Linux package, clarifying the installation options on Arch Linux, adding CMake install commands for the man page and helping in the creation of completions scripts
-- [Makefile-dot-in](https://github.com/Makefile-dot-in) for fixing a problem linking atomic on Android
-- [sebpardo](https://github.com/sebpardo) for pointing out a typo in the man page
-- [fosspill](https://github.com/fosspill) for correcting the name of the required ncurses library
-- [meskarune](https://github.com/meskarune) for the idea and helpful suggestions for creating the 'fade' and 'rainbow' options
-- [taschenlampe](https://github.com/taschenlampe) for creating a openSUSE Linux package and reporting an issue with the install script
-- [raviksharma](https://github.com/raviksharma) for creating the Debian package and the patch to append build flags in CMakeLists.txt
+```bash
+nix build
+```
 
-### License
-TMatrix is licensed under the `GPL-2.0-only` - see the [LICENSE](../master/LICENSE) file for details.
+Or run it directly:
 
-### Donations
-If you wish to send a donation you can do so here [![Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/M4444/donate) or here [![PayPal](assets/img/PayPal.png?raw=true)](https://www.paypal.com/paypalme/4milos).
+```bash
+nix run
+```
 
-### How it looks
-![](assets/img/TMatrix.png?raw=true)
-![](assets/img/TMatrix.gif?raw=true)
+The Flake uses `nixpkgs-26.05` and provides the default package for `x86_64-linux`.
+
+---
+
+## Fullwidth character support
+
+One of the main purposes of this fork is to improve the handling of fullwidth characters.
+
+The original character set contains characters whose terminal display width differs from ordinary ASCII characters. Mixing narrow and fullwidth characters without taking terminal cell width into account can cause the rain columns to become visually misaligned.
+
+This fork modifies the character handling so that fullwidth characters can be rendered correctly in terminals that support them.
+
+The modification is particularly useful when using Japanese and other CJK characters in the rain effect.
+
+---
+
+## Usage
+
+After installation, simply run:
+
+```bash
+tmatrix
+```
+
+To display the available command-line options:
+
+```bash
+tmatrix --help
+```
+
+For the manual page:
+
+```bash
+man tmatrix
+```
+
+During execution:
+
+| Key | Action         |
+| --- | -------------- |
+| `p` | Pause / resume |
+| `q` | Quit           |
+
+---
+
+## Contributing
+
+Suggestions, bug reports, improvements, and pull requests are welcome.
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+
+When submitting changes related to fullwidth characters or terminal rendering, please include information about:
+
+* Terminal emulator
+* Locale
+* Character encoding
+* Font
+* Terminal size
+* Reproduction steps
+
+This information can be particularly useful when investigating terminal cell-width and rendering issues.
+
+---
+
+## Relationship with upstream
+
+This repository is a fork of:
+
+**M4444/TMatrix**
+
+The upstream project remains the original source of TMatrix.
+
+This fork is maintained independently and contains additional modifications, including fullwidth character support and Nix Flake integration.
+
+If you are looking for the original project, please visit:
+
+https://github.com/M4444/TMatrix
+
+For the changes specific to this fork, please refer to this repository's commit history.
+
+---
+
+## Credits
+
+The original TMatrix project was written and maintained by **Miloš Stojanović**.
+
+This fork builds upon the work of the original TMatrix contributors and package maintainers.
+
+The upstream project acknowledges contributors who helped with:
+
+* Nix packaging
+* Gentoo packaging
+* Arch Linux packaging
+* Bash, Zsh and Tcsh completions
+* CMake improvements
+* Android compatibility
+* ncurses documentation
+* Visual effects
+* openSUSE packaging
+* Debian packaging
+
+Please see the upstream repository for the complete contributor history:
+
+https://github.com/M4444/TMatrix
+
+---
+
+## License
+
+TMatrix is licensed under the **GPL-2.0-only** license.
+
+See [LICENSE](LICENSE) for the complete license text.
+
+This fork remains under the same license as the upstream project.
+
+---
+
+## Upstream project
+
+**M4444/TMatrix**
+
+https://github.com/M4444/TMatrix
+
+## This fork
+
+**orange-seele/TMatrix**
+
+https://github.com/orange-seele/TMatrix
+
+*English is not my native language. This text was translated using automated translation tools; thank you for your understanding.*
