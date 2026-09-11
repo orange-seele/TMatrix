@@ -231,18 +231,16 @@ During execution:
 
 Suggestions, bug reports, improvements, and pull requests are welcome.
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+When reporting issues or submitting changes related to fullwidth characters or terminal rendering, please include as much of the following information as possible:
 
-When submitting changes related to fullwidth characters or terminal rendering, please include information about:
+Terminal emulator
+Locale and character encoding
+Font
+Terminal size
+Steps to reproduce the issue
+Screenshots or recordings, when applicable
 
-* Terminal emulator
-* Locale
-* Character encoding
-* Font
-* Terminal size
-* Reproduction steps
-
-This information can be particularly useful when investigating terminal cell-width and rendering issues.
+This information is particularly useful when investigating terminal cell-width, Unicode, and rendering issues.
 
 ---
 
