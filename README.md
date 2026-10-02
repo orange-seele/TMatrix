@@ -101,7 +101,7 @@ Then add the package to `environment.systemPackages`:
 
 ```nix
 environment.systemPackages = [
-  inputs.tmatrix.packages.${pkgs.system}.default
+  inputs.tmatrix.packages."${pkgs.stdenv.hostPlatform.system}".default
 ];
 ```
 
